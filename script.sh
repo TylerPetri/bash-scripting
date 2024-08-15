@@ -1,21 +1,34 @@
 #!/bin/bash
-phrase="Hello to you!"
-echo $phrase
 
-first_greeting="Nice to meet you!"
-later_greeting="How are you?"
-greeting_occasion=0
+echo "🔥🔥🔥 Beginning build!! 🔥🔥🔥"
 
-echo "How many times should I greet?"
-read greeting_limit
+firstline=$(head -n 1 source/changelog.md)
+read -a splitfirstline <<< $firstline
 
-while [ $greeting_occasion -lt $greeting_limit ]
-do
-  if [ $greeting_occasion -lt 1 ]
-  then
-    echo $first_greeting
-  else
-    echo $later_greeting
-  fi
-  greeting_occasion=$((greeting_occasion + 1))
-done
+version=${splitfirstline[1]}
+echo "You are building verison" $version
+
+echo "Continue? 1 for yes, 0 for no"
+read versioncontinue
+
+if [ $versioncontinue = 1 ]
+then
+  echo "OK"
+  for filename in source/*
+  do
+    echo $filename
+    if [ "$filename" == "source/secretinfo.md" ]
+      then
+        echo "Not copying" $filename
+      else
+        echo "Copying" $filename
+        cp $filename build/.
+      fi
+  done
+  cd build/
+  echo "Build version $version contains:"
+  ls
+  cd ..
+else
+  echo "Please come back when you are ready"
+fi
